@@ -38,12 +38,20 @@ public class PasteTextServiceImpl implements PasteTextService {
     private final PasteTextTagRepository pasteTextTagRepository;
 
     @Override
-    public String createPasteText(CreatePasteTextDTO request, String author) {
+    public String createPasteTextURL(CreatePasteTextDTO request, String author) {
         log.info("Creating text with details => {}", request);
 
         Employee employee = getAuthor(author);
 
-        List<PasteTextTag> pasteTextTags = getTags(request);
+        PasteText pasteText = createPasteTextURL(request, employee);
+
+        return getPasteTextUri(pasteText.getId());
+    }
+
+    @Override
+    public PasteText createPasteTextURL(CreatePasteTextDTO request, Employee employee) {
+
+        List<PasteTextTag> pasteTextTags = getTags(request.getTags());
 
         LocalDateTime now = LocalDateTime.now();
         //calculate the expiry time if expiry is chosen
@@ -61,22 +69,28 @@ public class PasteTextServiceImpl implements PasteTextService {
                 .build();
 
         pasteText = pasteTextRepository.save(pasteText);
+        return pasteText;
+    }
+
+    @Override
+    public String updatePasteTextURL(UpdatePasteTextDTO request, String author) {
+        log.info("Updating text with details => {}", request);
+
+        Employee employee = getAuthor(author);
+
+        PasteText pasteText = updatePasteTextURL(request, employee);
 
         return getPasteTextUri(pasteText.getId());
     }
 
     @Override
-    public String updatePasteText(UpdatePasteTextDTO request, String author) {
-        log.info("Updating text with details => {}", request);
-
+    public PasteText updatePasteTextURL(UpdatePasteTextDTO request, Employee employee) {
         PasteText pasteText = getPasteText(request.getId());
-
-        Employee employee = getAuthor(author);
 
         validateUserCanUpdate(pasteText.getAuthor(), employee.getId());
 
         //check if request contain tags
-        List<PasteTextTag> pasteTextTags = getTags(request);
+        List<PasteTextTag> pasteTextTags = getTags(request.getTags());
 
         LocalDateTime now = LocalDateTime.now();
         //calculate the expiry time if expiry is chosen
@@ -90,8 +104,7 @@ public class PasteTextServiceImpl implements PasteTextService {
         pasteText.setUpdatedDate(now);
 
         pasteText = pasteTextRepository.save(pasteText);
-
-        return getPasteTextUri(pasteText.getId());
+        return pasteText;
     }
 
     @Override
@@ -229,16 +242,14 @@ public class PasteTextServiceImpl implements PasteTextService {
     //get url from request, get last forward slas, replace it value with the text id
     private String getPasteTextUri(Long id) {
         String uri = ServletUriComponentsBuilder.fromCurrentRequest().toUriString();
-//        int lastSlashIndex = uri.lastIndexOf("/");
-//        return uri.substring(0, lastSlashIndex + 1) + id;
         return uri + "/" + id;
     }
 
-    private List<PasteTextTag> getTags(CreatePasteTextDTO request) {
+    private List<PasteTextTag> getTags(List<String> tags) {
         //check if request contain tags
         List<PasteTextTag> pasteTextTags = null;
-        if (request.getTags() != null && !request.getTags().isEmpty()) {
-            pasteTextTags = saveAndGetTagIds(request.getTags());
+        if (tags != null && !tags.isEmpty()) {
+            pasteTextTags = saveAndGetTagIds(tags);
         }
         return pasteTextTags;
     }
@@ -277,7 +288,7 @@ public class PasteTextServiceImpl implements PasteTextService {
     private List<PasteTextTag> saveAndGetTagIds(List<String> tags) {
         HashSet<String> textTags = new HashSet<>(tags);
         return textTags.stream().map(tag -> pasteTextTagRepository.findByTag(tag)
-                .orElse(createPasteTextTag(tag))).filter(Objects::nonNull).toList();
+                .orElseGet(() -> createPasteTextTag(tag))).filter(Objects::nonNull).toList();
     }
 
     private PasteTextTag createPasteTextTag(String tag) {

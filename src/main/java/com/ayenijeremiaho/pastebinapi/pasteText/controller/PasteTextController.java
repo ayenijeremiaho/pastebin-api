@@ -30,7 +30,7 @@ public class PasteTextController {
     public ResponseEntity<String> createPasteText(Principal principal,
                                                   @Valid @RequestBody CreatePasteTextDTO requestDTO) {
 
-        String url = pasteTextService.createPasteText(requestDTO, principal.getName());
+        String url = pasteTextService.createPasteTextURL(requestDTO, principal.getName());
         return ResponseEntity.created(URI.create(url)).build();
     }
 
@@ -38,7 +38,7 @@ public class PasteTextController {
     public ResponseEntity<String> updatePasteText(Principal principal,
                                                   @Valid @RequestBody UpdatePasteTextDTO requestDTO) {
 
-        String url = pasteTextService.updatePasteText(requestDTO, principal.getName());
+        String url = pasteTextService.updatePasteTextURL(requestDTO, principal.getName());
         return ResponseEntity.ok(url);
     }
 

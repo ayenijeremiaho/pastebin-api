@@ -1,5 +1,6 @@
 package com.ayenijeremiaho.pastebinapi.pasteText.service;
 
+import com.ayenijeremiaho.pastebinapi.employee.model.Employee;
 import com.ayenijeremiaho.pastebinapi.pasteText.dto.category.CategoryDTO;
 import com.ayenijeremiaho.pastebinapi.pasteText.dto.category.CategoryListDTO;
 import com.ayenijeremiaho.pastebinapi.pasteText.dto.expiration.ExpirationDTO;
@@ -13,15 +14,20 @@ import com.ayenijeremiaho.pastebinapi.pasteText.dto.text.UpdatePasteTextDTO;
 import com.ayenijeremiaho.pastebinapi.pasteText.enums.CategoryEnum;
 import com.ayenijeremiaho.pastebinapi.pasteText.enums.ExpirationEnum;
 import com.ayenijeremiaho.pastebinapi.pasteText.enums.ExposureEnum;
+import com.ayenijeremiaho.pastebinapi.pasteText.model.PasteText;
 
 import java.util.Arrays;
 import java.util.List;
 
 public interface PasteTextService {
 
-    String createPasteText(CreatePasteTextDTO request, String author);
+    String createPasteTextURL(CreatePasteTextDTO request, String author);
 
-    String updatePasteText(UpdatePasteTextDTO request, String author);
+    PasteText createPasteTextURL(CreatePasteTextDTO request, Employee employee);
+
+    String updatePasteTextURL(UpdatePasteTextDTO request, String author);
+
+    PasteText updatePasteTextURL(UpdatePasteTextDTO request, Employee employee);
 
     void deletePasteText(Long id, String author);
 
