@@ -23,11 +23,11 @@ public interface PasteTextService {
 
     String createPasteTextURL(CreatePasteTextDTO request, String author);
 
-    PasteText createPasteTextURL(CreatePasteTextDTO request, Employee employee);
+    PasteText createPasteText(CreatePasteTextDTO request, Employee employee);
 
     String updatePasteTextURL(UpdatePasteTextDTO request, String author);
 
-    PasteText updatePasteTextURL(UpdatePasteTextDTO request, Employee employee);
+    PasteText updatePasteText(UpdatePasteTextDTO request, Employee employee);
 
     void deletePasteText(Long id, String author);
 
@@ -36,6 +36,10 @@ public interface PasteTextService {
     PasteTextDTOList getAllPasteTexts(int size, int page, String requester);
 
     PasteTextDTOList getMyPasteTexts(int size, int page, String requester);
+
+    void updateDeletedStatus(PasteText pasteText);
+
+    void getPasteTextsToDelete();
 
     default CategoryListDTO getCategories() {
         List<CategoryDTO> categoryList = Arrays.stream(CategoryEnum.values())

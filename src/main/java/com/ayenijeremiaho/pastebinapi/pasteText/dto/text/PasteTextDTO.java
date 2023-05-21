@@ -1,5 +1,6 @@
 package com.ayenijeremiaho.pastebinapi.pasteText.dto.text;
 
+import com.ayenijeremiaho.pastebinapi.pasteText.enums.ExposureEnum;
 import lombok.Builder;
 import lombok.Data;
 
@@ -25,4 +26,6 @@ public class PasteTextDTO {
     private LocalDateTime updatedDate;
 
     private LocalDateTime expirationDate;
+
+    private String exposure;
 }

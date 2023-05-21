@@ -11,7 +11,4 @@ public class PastebinApiApplication {
         SpringApplication.run(PastebinApiApplication.class, args);
     }
 
-    CommandLineRunner commandLineRunner = args -> {
-
-    };
 }

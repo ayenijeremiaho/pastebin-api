@@ -43,13 +43,13 @@ public class PasteTextServiceImpl implements PasteTextService {
 
         Employee employee = getAuthor(author);
 
-        PasteText pasteText = createPasteTextURL(request, employee);
+        PasteText pasteText = createPasteText(request, employee);
 
         return getPasteTextUri(pasteText.getId());
     }
 
     @Override
-    public PasteText createPasteTextURL(CreatePasteTextDTO request, Employee employee) {
+    public PasteText createPasteText(CreatePasteTextDTO request, Employee employee) {
 
         List<PasteTextTag> pasteTextTags = getTags(request.getTags());
 
@@ -78,13 +78,13 @@ public class PasteTextServiceImpl implements PasteTextService {
 
         Employee employee = getAuthor(author);
 
-        PasteText pasteText = updatePasteTextURL(request, employee);
+        PasteText pasteText = updatePasteText(request, employee);
 
         return getPasteTextUri(pasteText.getId());
     }
 
     @Override
-    public PasteText updatePasteTextURL(UpdatePasteTextDTO request, Employee employee) {
+    public PasteText updatePasteText(UpdatePasteTextDTO request, Employee employee) {
         PasteText pasteText = getPasteText(request.getId());
 
         validateUserCanUpdate(pasteText.getAuthor(), employee.getId());
@@ -137,10 +137,9 @@ public class PasteTextServiceImpl implements PasteTextService {
             updateDeletedStatus(pasteText);
         }
 
-        pasteText = pasteTextRepository.save(pasteText);
-
         return getPasteTextDTO(pasteText);
     }
+
 
     @Override
     public PasteTextDTOList getAllPasteTexts(int size, int page, String requester) {
@@ -168,6 +167,27 @@ public class PasteTextServiceImpl implements PasteTextService {
                 .findAllByAuthor_EmailAndDeletedIsFalse(requester, pageable);
 
         return getPasteTextDTOList(pasteTextPageable);
+    }
+
+    @Override
+    public void updateDeletedStatus(PasteText pasteText) {
+        pasteText.setDeleted(true);
+        pasteText.setDeletedDate(LocalDateTime.now());
+
+        pasteTextRepository.save(pasteText);
+    }
+
+    @Override
+    public void getPasteTextsToDelete() {
+        List<PasteText> pasteTexts = pasteTextRepository.getAllToBeDeleted(LocalDateTime.now());
+
+        if (pasteTexts.isEmpty()) {
+            log.info("No pending text to delete");
+            return;
+        }
+
+        log.info("{} pending text to delete", pasteTexts.size());
+        pasteTexts.forEach(this::updateDeletedStatus);
     }
 
 
@@ -214,6 +234,7 @@ public class PasteTextServiceImpl implements PasteTextService {
                 .creationDate(pasteText.getCreationDate())
                 .updatedDate(pasteText.getUpdatedDate())
                 .expirationDate(pasteText.getExpirationDate())
+                .exposure(pasteText.getExposure().description)
                 .tags(tags)
                 .build();
     }
@@ -223,13 +244,6 @@ public class PasteTextServiceImpl implements PasteTextService {
     private PasteText getPasteText(Long id) {
         return pasteTextRepository.findByIdAndDeletedIsFalse(id)
                 .orElseThrow(() -> new NotFoundException("Text with Id does not exist"));
-    }
-
-    private void updateDeletedStatus(PasteText pasteText) {
-        pasteText.setDeleted(true);
-        pasteText.setDeletedDate(LocalDateTime.now());
-
-        pasteTextRepository.save(pasteText);
     }
 
     private static void validateUserCanUpdate(Employee author, Long requesterId) {
