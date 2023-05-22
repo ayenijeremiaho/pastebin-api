@@ -31,7 +31,7 @@ public class PasteTextController {
                                                   @Valid @RequestBody CreatePasteTextDTO requestDTO) {
 
         String url = pasteTextService.createPasteTextURL(requestDTO, principal.getName());
-        return ResponseEntity.created(URI.create(url)).build();
+        return ResponseEntity.created(URI.create(url)).body(url);
     }
 
     @PutMapping()

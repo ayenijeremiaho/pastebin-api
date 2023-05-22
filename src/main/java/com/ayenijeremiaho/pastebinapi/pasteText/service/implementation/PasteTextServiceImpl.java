@@ -235,6 +235,7 @@ public class PasteTextServiceImpl implements PasteTextService {
                 .updatedDate(pasteText.getUpdatedDate())
                 .expirationDate(pasteText.getExpirationDate())
                 .exposure(pasteText.getExposure().description)
+                .expiration(pasteText.getExpiration().description)
                 .tags(tags)
                 .build();
     }
