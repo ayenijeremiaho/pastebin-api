@@ -3,7 +3,6 @@ package com.ayenijeremiaho.pastebinapi.pasteText.dto.text;
 import com.ayenijeremiaho.pastebinapi.pasteText.enums.CategoryEnum;
 import com.ayenijeremiaho.pastebinapi.pasteText.enums.ExpirationEnum;
 import com.ayenijeremiaho.pastebinapi.pasteText.enums.ExposureEnum;
-import jakarta.validation.constraints.NotEmpty;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
 import lombok.Data;
@@ -14,7 +13,6 @@ import java.util.List;
 public class CreatePasteTextDTO {
 
     @NotNull(message = "Text cannot be null")
-    @NotEmpty(message = "Text cannot be empty")
     @Size(min = 5, message = "Text Should be a minimum of 5 characters")
     private String text;
 

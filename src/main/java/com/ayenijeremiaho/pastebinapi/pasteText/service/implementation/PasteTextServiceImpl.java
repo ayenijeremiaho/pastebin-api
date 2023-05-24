@@ -100,6 +100,7 @@ public class PasteTextServiceImpl implements PasteTextService {
         pasteText.setExpirationDate(expirationDate);
         pasteText.setTags(pasteTextTags);
         pasteText.setCategory(request.getCategory());
+        pasteText.setExposure(request.getExposure());
         pasteText.setExpiration(request.getExpiration());
         pasteText.setUpdatedDate(now);
 

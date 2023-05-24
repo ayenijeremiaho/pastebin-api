@@ -8,6 +8,6 @@ import lombok.EqualsAndHashCode;
 @EqualsAndHashCode(callSuper = true)
 public class UpdatePasteTextDTO extends CreatePasteTextDTO {
 
-    @NotNull(message = "Select Text to edit")
+    @NotNull(message = "No selected PasteText to edit")
     private Long id;
 }

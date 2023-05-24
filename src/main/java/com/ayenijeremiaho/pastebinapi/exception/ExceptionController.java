@@ -4,6 +4,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.support.DefaultMessageSourceResolvable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.http.converter.HttpMessageNotReadableException;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
@@ -23,6 +24,10 @@ public class ExceptionController {
             return new ResponseEntity<>(message, HttpStatus.NOT_FOUND);
         } else if (ex instanceof GeneralException) {
             return new ResponseEntity<>(message, HttpStatus.BAD_REQUEST);
+        } else if (ex instanceof HttpMessageNotReadableException) {
+            String errors = ex.getMessage().replaceFirst("`.*`", "").replaceFirst("of type  ", "");
+            message = ExceptionMessage.get(ex.getClass(), errors);
+            return new ResponseEntity<>(message, HttpStatus.BAD_REQUEST);
         } else {
             return new ResponseEntity<>(message, HttpStatus.INTERNAL_SERVER_ERROR);
         }
@@ -41,7 +46,7 @@ public class ExceptionController {
 //                .collect(Collectors.joining(". "));
 
         ExceptionMessage message = ExceptionMessage.get(ex.getClass(), errors);
-        return new ResponseEntity<>(message, HttpStatus.NOT_ACCEPTABLE);
+        return new ResponseEntity<>(message, HttpStatus.BAD_REQUEST);
     }
 
 }
