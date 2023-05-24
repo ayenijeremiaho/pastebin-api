@@ -1,5 +1,6 @@
 package com.ayenijeremiaho.pastebinapi.auth.controller;
 
+import com.ayenijeremiaho.pastebinapi.employee.service.EmployeeService;
 import org.json.JSONObject;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -19,6 +20,8 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @SpringBootTest(webEnvironment = WebEnvironment.RANDOM_PORT)
 class AuthControllerTest {
 
+    @Autowired
+    private EmployeeService employeeService;
 
     @Autowired
     private WebApplicationContext context;
@@ -42,10 +45,14 @@ class AuthControllerTest {
 
     @Test
     void authenticateUserWithValidCredentialsTest() throws Exception {
+        String EMAIL = "test@law.com";
+        String PASSWORD = "password";
+
+        employeeService.createEmployee(EMAIL, PASSWORD);
 
         JSONObject requestObject = new JSONObject();
-        String request = requestObject.put("email", "user1@law.com")
-                .put("password", "password").toString();
+        String request = requestObject.put("email", EMAIL)
+                .put("password", PASSWORD).toString();
 
         mvc.perform(MockMvcRequestBuilders.post("/api/v1/auth/login").content(request).contentType(MediaType.APPLICATION_JSON).accept(MediaType.APPLICATION_JSON)).andExpect(status().is2xxSuccessful()).andExpect(MockMvcResultMatchers.jsonPath("$.accessToken").isNotEmpty());
     }

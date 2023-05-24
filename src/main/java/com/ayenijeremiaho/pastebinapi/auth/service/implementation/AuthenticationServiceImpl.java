@@ -6,7 +6,6 @@ import com.ayenijeremiaho.pastebinapi.auth.service.AuthenticationService;
 import com.ayenijeremiaho.pastebinapi.config.jwt.JwtTokenProvider;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.security.authentication.AuthenticationCredentialsNotFoundException;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
